@@ -6,12 +6,32 @@
 /*   By: rmoswela <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/29 13:48:43 by rmoswela          #+#    #+#             */
-/*   Updated: 2016/10/31 14:25:42 by rmoswela         ###   ########.fr       */
+/*   Updated: 2016/10/31 16:05:18 by rmoswela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "fdf.h"
+
+/*function*/
+t_map		*list_rev(t_map *start)
+{
+	t_map	*prev;
+	t_map	*current;
+	t_map	*next;
+
+	prev = NULL;
+	current = start;
+	while (current != NULL)
+	{
+		next = current->next;
+		current->next = prev;
+		prev = current;
+		current = next;
+	}
+	start = prev;
+	return (start);
+}
 
 /*function to determine size*/
 void		ft_findSize(t_env *env, int length)
@@ -65,7 +85,19 @@ t_map		ft_read_map(char **line, t_env *new, int fd, t_env *env)
 			new = (t_map *)malloc(sizeof(t_map));
 			new->z = tmp.y;
 			/*use of isometric equation to determine point in space so to make a 3D view*/
-			new->x = (1 / sqrt(6)) * (sqrt(3) * tmp.x)
+			new->x = (1 / sqrt(6)) * ((sqrt(3) * tmp.x) + (0 * tmp.y) \
+				   	+ (-(sqrt(3) * new->z))) * tmp.size;
+			new->y = (1 / sqrt(6)) * ((1 * tmp.x) + (2 * ft_atoi(line[tmp.x])) \
+					+ (1 * new->z));
+			new->next = tmp.map;
+			tmp.map = new;
+			tmp.x++;
 		}
+		tmp.y++;
 	}
+	new = tmp.map;
+	env->x = tmp.x;
+	env->y = tmp.y;
+	env->area = tmp.x * tmp.y;
+	return(list_rev(new));
 }
