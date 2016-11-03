@@ -6,14 +6,14 @@
 /*   By: rmoswela <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/29 13:48:43 by rmoswela          #+#    #+#             */
-/*   Updated: 2016/10/31 16:05:18 by rmoswela         ###   ########.fr       */
+/*   Updated: 2016/11/03 11:30:37 by rmoswela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "fdf.h"
 
-/*function*/
+/*function i dont need
 t_map		*list_rev(t_map *start)
 {
 	t_map	*prev;
@@ -31,9 +31,9 @@ t_map		*list_rev(t_map *start)
 	}
 	start = prev;
 	return (start);
-}
+}*/
 
-/*function to determine size*/
+/*function to determine size or height of map*/
 void		ft_findSize(t_env *env, int length)
 {
 	if (length < 25)
@@ -42,7 +42,7 @@ void		ft_findSize(t_env *env, int length)
 		env->size = 15;
 	else if (length < 100 && length > 50)
 		env->size = 10;
-	else if (lenght > 100 && length < 300)
+	else if (length > 100 && length < 300)
 		env->size = 5;
 	else if (length > 300)
 		env->size = 1;
@@ -59,7 +59,7 @@ void		ft_getSize(char **line, t_env *env)
 		length++;
 	if (length == env->x || length)
 	{
-		findSize(env, length);
+		ft_findSize(env, length);
 		env->x = 0;
 	}
 	else
@@ -67,18 +67,18 @@ void		ft_getSize(char **line, t_env *env)
 }
 
 /*function to read from file and return map points*/
-t_map		ft_read_map(char **line, t_env *new, int fd, t_env *env)
+t_map		*ft_read_map(char **line, t_map *new, int fd, t_env *env)
 {
 	/*temporary record*/
 	t_env	tmp;
 
 	tmp.y = 0;
 	tmp.map = NULL;
-	/*iterate */
-	while (getNextLine(fd, line) == 1 && tmp.x != -1)
+	/*reading of the points from the file descriptor*/
+	while (get_next_line(fd, line) == 1 && tmp.x != -1)
 	{
 		line = ft_strsplit(*line, ' ');
-		ft_getSize(&line, tmp);
+		ft_getSize(line, &tmp);/*size gives the height map*/
 		while (line[tmp.x] != '\0' && tmp.x != -1)
 		{
 			/*allocate memory for new map record*/
@@ -87,8 +87,8 @@ t_map		ft_read_map(char **line, t_env *new, int fd, t_env *env)
 			/*use of isometric equation to determine point in space so to make a 3D view*/
 			new->x = (1 / sqrt(6)) * ((sqrt(3) * tmp.x) + (0 * tmp.y) \
 				   	+ (-(sqrt(3) * new->z))) * tmp.size;
-			new->y = (1 / sqrt(6)) * ((1 * tmp.x) + (2 * ft_atoi(line[tmp.x])) \
-					+ (1 * new->z));
+			new->y = (1 / sqrt(6)) * ((1 * tmp.x) + (2 * -(ft_atoi(line[tmp.x]))) \
+					+ (1 * new->z)) * tmp.size;
 			new->next = tmp.map;
 			tmp.map = new;
 			tmp.x++;
@@ -96,8 +96,9 @@ t_map		ft_read_map(char **line, t_env *new, int fd, t_env *env)
 		tmp.y++;
 	}
 	new = tmp.map;
+	/*saving of points*/
 	env->x = tmp.x;
 	env->y = tmp.y;
 	env->area = tmp.x * tmp.y;
-	return(list_rev(new));
+	return(new);
 }
