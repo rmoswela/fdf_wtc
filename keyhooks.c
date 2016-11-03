@@ -6,17 +6,18 @@
 /*   By: rmoswela <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/10/31 16:07:21 by rmoswela          #+#    #+#             */
-/*   Updated: 2016/10/31 16:21:28 by rmoswela         ###   ########.fr       */
+/*   Updated: 2016/11/03 07:27:08 by rmoswela         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
 /*function to close view window*/
-void	ft_close(int keycode)
+int		ft_exit(int keycode)
 {
 	if (keycode == EXIT)
 	{
 		exit(0);
 	}
+	return (0);
 }
