@@ -21,5 +21,4 @@ fclean:
 	make -C includes/ fclean
 	rm -rf fdf
 
-all:
-	fclean all
+re:	fclean all
